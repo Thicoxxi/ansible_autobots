@@ -1,5 +1,5 @@
 -------------------------
-          servidor web
+          servidor KVM Hypervisor
 
 hostname.: "{{ ansible_fqdn }}"
 endreco ip.: "{{ ansible_all_ipv4_addresses }}"
