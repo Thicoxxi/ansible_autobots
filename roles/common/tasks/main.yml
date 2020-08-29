@@ -26,8 +26,35 @@
 - name: Copying a template
   template: src=motd dest=/etc/motd force=yes owner=root group=root
 
-# instalacao do nginx
-#- name: instalacao do nginx
+# Cockpit installation
+- name: Cockpit installation
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+        - cockpit
+        - cockpit-machines
+          
+# Started Cockpit
+- name: Starting cockpit
+  systemd:
+    name: "cockpit.socket"
+    state: "started"
+    enabled: true
+    daemon_reload: true
+
+# Enable firewall rules
+- name: Enable firewall rules
+  firewalld:
+    service: cockpit      
+    permanent: yes
+    state: enabled
+
+# Reload firewall
+- name: firewalld reload
+  command: firewall-cmd --reload
+
 #  yum: name=nginx state=latest
 #  notify: restart nginx
 ...

@@ -1,8 +1,8 @@
 ansible_ssh_port: 22
 ansible_ssh_user: root
-ansible_ssh_pass: fit$#@!
+ansible_ssh_pass: perola
 ansible_become: yes
 ansible_become_method: sudo
 ansible_become_user: root
-ansible_become_pass: fit$#@!
+ansible_become_pass: perola
 ansible_connection: ssh
