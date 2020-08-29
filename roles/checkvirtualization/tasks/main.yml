@@ -1,6 +1,6 @@
 ---
 
-# Installing the KVM
+# Check CPU Virtualization
 
 - name: Check for CPU Virtualization
   shell: "lscpu | grep -i virtualization"
