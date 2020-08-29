@@ -1,8 +1,22 @@
 ---
 
-# Instalacao do PHP
+# Cockpit installation
+- name: Cockpit installation
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+        - cockpit
+        - cockpit-machines
 
-- name: instalacao do pacote php
-  yum: name=php state=latest update_cache=yes
+# Started Cockpit
+- name: Starting cockpit
+  systemd:
+    name: "cockpit.socket"
+    state: "started"
+    enabled: true
+    daemon_reload: true
+
 
 ...

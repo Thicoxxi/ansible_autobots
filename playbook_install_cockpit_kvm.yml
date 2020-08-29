@@ -2,5 +2,6 @@
   hosts: all
   roles:
     - common
+    - cockpit
     - firewalld
     - updates
