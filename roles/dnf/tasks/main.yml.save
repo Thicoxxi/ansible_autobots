@@ -8,25 +8,25 @@
     state: present
   when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
 
+# Installing copr plugin
 
-  # Installing copr plugin
-
-- name: Installing  yum-plugin-copr
+- name: 
+Installing  yum-plugin-copr
   yum:
     name: yum-plugin-copr
     state: present
+    register: copr
   when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
-  
-  
+
 # Enable copr repo
 
 - name: Enable copr repo rpmsoftwaremanagement/dnf
   shell: yum copr enable rpmsoftwaremanagement/dnf-nightly -y
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7") and copr.changed == True 
 
-# Removing Yum Utils
+# Remove Yum Utils
 
-- name: Removing yum-utils
+- name: Remove yum-utils
   yum:
     name: yum-utils
     state: absent
@@ -34,13 +34,19 @@
 
 # Installing DNF Utils
 
-- name: Installing  dnf
+- name: Install dnf
   yum:
     name: "{{ packages }}"
     state: present
   vars:
     packages:
-        - dnf 
+        - dnf
+        - dnf-utils
+        - dnf-plugins-core
+        - dnf-langpacks-conf
+        - dnf-langpacks
+        - dnf-conf
+        - dnf-automatic 
   when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
 
 ...
