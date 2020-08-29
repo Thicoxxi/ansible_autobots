@@ -1,6 +1,7 @@
 - name: Default Playbook - Starting Deploy
   hosts: all
   roles:
+    - dnf
     - common
     - cockpit
     - firewalld
