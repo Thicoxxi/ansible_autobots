@@ -2,9 +2,10 @@
 
 # Installing the KVM
 
-- name: Verify KVM module is loaded
-  shell: "lsmod | grep -i kvm"
+- name: Check for CPU Virtualization
+  shell: "lscpu | grep -i virtualization"
   register: result
   failed_when: "result.rc != 0"
+
 
 ...
