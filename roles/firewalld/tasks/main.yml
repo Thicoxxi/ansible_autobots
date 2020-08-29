@@ -1,0 +1,15 @@
+---
+
+# Enable firewall rules for Cockpit
+- name: Enable firewall rules for Cockpit
+  firewalld:
+    service: cockpit
+    permanent: yes
+    state: enabled
+
+# Reload firewall
+- name: firewalld reload
+  command: firewall-cmd --reload
+
+
+...

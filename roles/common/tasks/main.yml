@@ -45,15 +45,15 @@
     daemon_reload: true
 
 # Enable firewall rules
-- name: Enable firewall rules
-  firewalld:
-    service: cockpit      
-    permanent: yes
-    state: enabled
+#- name: Enable firewall rules
+#  firewalld:
+#    service: cockpit      
+#    permanent: yes
+#    state: enabled
 
 # Reload firewall
-- name: firewalld reload
-  command: firewall-cmd --reload
+#- name: firewalld reload
+#  command: firewall-cmd --reload
 
 #  yum: name=nginx state=latest
 #  notify: restart nginx

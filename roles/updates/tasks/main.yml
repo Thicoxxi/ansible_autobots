@@ -3,7 +3,7 @@
 # Update Red Hat Like
 
 - name: update system red hat
-  yum: name=* state=latest security=yes
+  dnf: name=* state=latest security=yes
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 #Update Debian Like

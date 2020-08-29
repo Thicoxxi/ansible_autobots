@@ -1,8 +1,0 @@
----
-
-# Instalacao do PHP
-
-- name: instalacao do pacote php
-  yum: name=php state=latest update_cache=yes
-
-...
