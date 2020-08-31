@@ -2,6 +2,25 @@
 
 # Installing the KVM
 
+- name: Installing KVM Packages for CentOS or RedHat 7
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+        - qemu-kvm
+        - libvirt
+        - libvirt-python
+        - libguestfs-tools
+        - virt-install
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+
+- name: Enable and Start libvirtd
+  systemd:
+    name: libvirtd
+    state: started
+    enabled: yes
+
 - name: Verify KVM module is loaded
   shell: "lsmod | grep -i kvm"
   register: result
