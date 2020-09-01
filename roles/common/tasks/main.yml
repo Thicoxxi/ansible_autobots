@@ -5,18 +5,12 @@
   dnf: name=* state=latest update_cache=yes
 
 - name: Package Installation
-  dnf: 
-    name: "{{ packages }}"
-    state: latest
-  vars:
-    packages:
-        - net-tools
-        - vim
-        - nmap
+  dnf: name={{ common_packages_centos }} state=latest
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 # Timezone configuration
 - name: Timezone configuration
-  file: src=/usr/share/zoneinfo/America/Sao_Paulo dest=/etc/localtime state=link force=yes
+  file: src=/usr/share/zoneinfo/{{ timezone }} state=link force=yes
 
 # copiando arquivo de backup
 #- name: copiando arquivo de backup

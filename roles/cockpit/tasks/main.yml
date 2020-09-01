@@ -2,13 +2,7 @@
 
 # Cockpit installation
 - name: Cockpit installation
-  dnf:
-    name: "{{ packages }}"
-    state: latest
-  vars:
-    packages:
-        - cockpit
-        - cockpit-machines
+  dnf: name={{ cockpit_packages }} state=latest
 
 # Started Cockpit
 - name: Starting cockpit

@@ -1,0 +1,28 @@
+timezone: America/Sao_Paulo
+
+common_packages_centos:
+  - "@Development tools"
+  - bind-utils
+  - bc
+  - bzip2
+  - curl
+ # - elinks
+  - git
+  - htop
+  - iperf3
+  - iptraf
+  - lsof
+ # - lynx
+  - mtr
+  - net-tools
+  - nmap
+  - pv
+  - screen
+  - tcpdump
+  - telnet
+  - unzip
+  - vim
+  - wget
+  - aspell
+  - bash-completion
+  - tree

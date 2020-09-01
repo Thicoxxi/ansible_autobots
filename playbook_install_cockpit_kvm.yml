@@ -4,6 +4,6 @@
     - dnf
     - common
     - cockpit
-    - checkvirtualization
+    #- checkvirtualization
     - firewalld
     - updates

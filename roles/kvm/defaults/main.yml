@@ -1,0 +1,11 @@
+kvm_packages_centos7:
+  - qemu-kvm
+  - libvirt
+  - libvirt-python
+  - libguestfs-tools
+  - virt-install
+
+kvm_packages_centos8:
+  - virt-install
+  - virt-viewer
+

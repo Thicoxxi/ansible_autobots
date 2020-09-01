@@ -6,7 +6,7 @@
   yum:
     name: epel-release
     state: present
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7","8" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7","8")
 
 
   # Installing copr plugin
@@ -35,12 +35,7 @@
 # Installing DNF Utils
 
 - name: Installing  dnf
-  yum:
-    name: "{{ packages }}"
-    state: present
-  vars:
-    packages:
-        - dnf 
+  yum: name={{ dnf_packages }} state=present
   when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
 
 ...
