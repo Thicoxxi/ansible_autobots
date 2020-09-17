@@ -1,0 +1,45 @@
+---
+
+# Installing phpmyadmin
+
+- name: Installing packages for phpmyadmin
+  dnf:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+        - wget 
+        - php 
+        - php-pdo 
+        - php-pecl-zip 
+        - php-json 
+        - php-common 
+        - php-fpm 
+        - php-mbstring 
+        - php-cli
+        - php-mysqlnd
+        - php-gd
+        - php-pdo
+        - php-xml
+
+- name: Download zip file phpmyadmin
+  command: wget -P /tmp https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz
+
+- name: Unzipping phpmyadmin zip
+  command: tar -zxvf /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz  -C /tmp/
+
+- name: Move folder phpmyadmin to web folder
+  command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
+
+- name: Copying configuration file
+  command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
+
+name: Setting phpmyadmin password
+  copy: src={{ item.src}} dest={{item.dest}}
+  with_items:
+          - { src: 'config.inc.php', dest: '/usr/share/phpMyAdmin/config.inc.php' }
+
+- name: Creating tables
+  command: mysql < /usr/share/phpMyAdmin/sql/create_tables.sql -u root -p
+
+...
