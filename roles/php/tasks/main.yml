@@ -83,7 +83,7 @@ name: Setting phpmyadmin password
     setype: httpd_sys_rw_content_t
     state: present
 
-- name: Allow phpmyadmin to modify files in "/usr/share/phpMyAdmin/tmp
+- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/tmp
   sefcontext:
     target: '/usr/share/phpMyAdmin/tmp(/.*)?'
     setype: httpd_sys_rw_content_t

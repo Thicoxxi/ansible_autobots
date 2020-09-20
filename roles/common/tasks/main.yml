@@ -24,7 +24,7 @@
 
 # copy template
 - name: Copying a template
-  template: src=motd dest=/etc/motd force=yes owner=root group=root
+  template: src=motd1 dest=/etc/motd force=yes owner=root group=root
 
 
 ...

@@ -1,0 +1,10 @@
+- name: Default Playbook - Starting Deploy
+  hosts: all
+  roles:
+    - dnf
+    - common
+    - apache
+    - mysql
+    - php
+    - wordpress
+    - firewalld

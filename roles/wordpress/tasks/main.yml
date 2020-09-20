@@ -18,4 +18,33 @@
     login_user: root
     login_password: "{{ mysql_root_password }}"
 
+- name: Download zip file wordpress
+  get_url:
+    url: https://wordpress.org/latest.tar.gz
+    dest: /tmp/latest.tar.gz
+    mode: '0440'
+
+- name: Unzipping wordpress
+  unarchive:
+    src: /tmp/latest.tar.gz
+    dest: /var/www/html
+
+- name: Allow wordpress to modify files in /var/www/html
+  file:
+    path: "/var/www/html"
+    state: "directory"
+    recurse: "yes"
+    owner: "apache"
+    group: "apache"
+
+
+- name: Allow apache to modify files in /var/www/html
+  sefcontext:
+    target: '/var/www/html'
+    setype: httpd_sys_rw_content_t
+    state: present
+
+- name: Apply new SELinux file context to filesystem
+  command: restorecon -irv /var/www/html
+
 ...
