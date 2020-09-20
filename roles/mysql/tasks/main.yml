@@ -1,43 +1,38 @@
 ---
 
-# Installing the KVM
+# Installing the Mysql
 
-- name: Installing KVM Packages for CentOS or RedHat 7
+- name: Installing Mysql Packages for CentOS or RedHat
   dnf:
     name: "{{ packages }}"
     state: latest
   vars:
     packages:
-        - qemu-kvm
-        - libvirt
-        - libvirt-python
-        - libguestfs-tools
-        - virt-install
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+        - mysql-server
+        - mysql
 
-- name: Installing  virt module for CentOS or RedHat 8
-  shell: dnf module install virt -y
-  when: ansible_virtualization_type == "kvm" and (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "8")
-
-- name: Installing KVM Packages for CentOS or RedHat 8
-  dnf:
-    name: "{{ packages }}"
-    state: latest
-  vars:
-    packages:
-        - virt-install
-        - virt-viewer
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "8")
-
-- name: Enable and Start libvirtd
+- name: Enable and Start mysqld
   systemd:
-    name: libvirtd
+    name: mysqld
     state: started
     enabled: yes
 
-- name: Verify KVM module is loaded
-  shell: "lsmod | grep -i kvm"
-  register: result
-  failed_when: "result.rc != 0"
+- name: Install python3-PyMySQL library
+  dnf:
+    name: python3-PyMySQL
+    state: present
+
+- name: Set MySQL root Password
+  mysql_user:
+    login_host: 'localhost'
+    login_user: 'root'
+    login_password: ''
+    name: 'root'
+    password: '{{ mysql_pass }}'
+    remove_anonymous_user: true
+    disallow_root_login_remotely: true
+    remove_test_db: true
+    register: mysql_secure
+    state: present
 
 ...

@@ -8,9 +8,15 @@
     state: enabled
 
 # Enable firewall rules for Apache
-- name: Enable firewall rules for Cockpit
+- name: Enable firewall rules for HTTP
   firewalld:
     service: http
+    permanent: yes
+    state: enabled
+
+- name: Enable firewall rules for HTTPS
+  firewalld:
+    service: https
     permanent: yes
     state: enabled
 

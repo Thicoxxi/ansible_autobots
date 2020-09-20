@@ -1,43 +1,21 @@
 ---
 
-# Installing the KVM
+# Installing the Wordpress
 
-- name: Installing KVM Packages for CentOS or RedHat 7
-  dnf:
-    name: "{{ packages }}"
-    state: latest
-  vars:
-    packages:
-        - qemu-kvm
-        - libvirt
-        - libvirt-python
-        - libguestfs-tools
-        - virt-install
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
-
-- name: Installing  virt module for CentOS or RedHat 8
-  shell: dnf module install virt -y
-  when: ansible_virtualization_type == "kvm" and (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "8")
-
-- name: Installing KVM Packages for CentOS or RedHat 8
-  dnf:
-    name: "{{ packages }}"
-    state: latest
-  vars:
-    packages:
-        - virt-install
-        - virt-viewer
-  when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "8")
-
-- name: Enable and Start libvirtd
-  systemd:
-    name: libvirtd
-    state: started
-    enabled: yes
-
-- name: Verify KVM module is loaded
-  shell: "lsmod | grep -i kvm"
-  register: result
-  failed_when: "result.rc != 0"
+- name: Creates database for WordPress
+  mysql_db:
+    name: "{{ mysql_db }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+	
+- name: Create MySQL user for WordPress
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_db }}.*:ALL"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
 
 ...
