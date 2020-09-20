@@ -21,25 +21,76 @@
         - php-gd
         - php-pdo
         - php-xml
+        - policycoreutils-python-utils
 
 - name: Download zip file phpmyadmin
-  command: wget -P /tmp https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz
+  get_url:
+    url: https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz
+    dest: /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz
+    mode: '0440'
+  #command: wget -P /tmp https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz
 
-- name: Unzipping phpmyadmin zip
-  command: tar -zxvf /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz  -C /tmp/
+- name: Unzipping phpmyadmin
+  unarchive:
+    src: /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz
+    dest: /tmp/phpMyAdmin-5.0.2-all-languages
+  #command: tar -zxvf /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz  -C /tmp/
 
 - name: Move folder phpmyadmin to web folder
-  command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
+  copy:
+    src: /tmp/phpMyAdmin-5.0.2-all-languages
+    dest: /usr/share/phpMyAdmin
+  #command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
 
 - name: Copying configuration file
-  command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
+  copy:
+    src: /usr/share/phpMyAdmin/config.sample.inc.php
+    dest: /usr/share/phpMyAdmin/config.inc.php
+  #command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
 
 name: Setting phpmyadmin password
   copy: src={{ item.src}} dest={{item.dest}}
   with_items:
           - { src: 'config.inc.php', dest: '/usr/share/phpMyAdmin/config.inc.php' }
 
-- name: Creating tables
-  command: mysql < /usr/share/phpMyAdmin/sql/create_tables.sql -u root -p
+- name: Creating tables phpmyadmin
+  mysql_db:
+    state: import
+    name: phpmyadmin
+    target: /usr/share/phpMyAdmin/sql/create_tables.sql
+
+- name: Creating alias for apache web server
+    copy: src={{ item.src}} dest={{item.dest}}
+    with_items:
+            - { src: 'phpMyAdmin.conf', dest: '/etc/httpd/conf.d/phpMyAdmin.conf' }
+
+- name: Create diretory tmp
+  file:
+    path: /usr/share/phpMyAdmin/tmp
+    owner: apache
+    group: apache
+    mode: '0777'
+    state: directory
+
+- name Restart apache server
+  systemd:
+    name: httpd
+    state: reloaded
+
+- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/
+  sefcontext:
+    target: '/usr/share/phpMyAdmin/'
+    setype: httpd_sys_rw_content_t
+    state: present
+
+- name: Allow phpmyadmin to modify files in "/usr/share/phpMyAdmin/tmp
+  sefcontext:
+    target: '/usr/share/phpMyAdmin/tmp(/.*)?'
+    setype: httpd_sys_rw_content_t
+    state: present
+
+- name: Apply new SELinux file context to filesystem
+  command: restorecon -Rv '/usr/share/phpMyAdmin/'
+     
 
 ...
