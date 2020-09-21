@@ -29,10 +29,10 @@
     login_password: ''
     name: 'root'
     password: '{{ mysql_pass }}'
-    remove_anonymous_user: true
-    disallow_root_login_remotely: true
-    remove_test_db: true
-    register: mysql_secure
+    #remove_anonymous_user: true
+    #disallow_root_login_remotely: true
+    #remove_test_db: true
+    #register: mysql_secure
     state: present
 
 ...

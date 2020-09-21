@@ -8,7 +8,7 @@
     state: present
     login_user: root
     login_password: "{{ mysql_root_password }}"
-	
+ 
 - name: Create MySQL user for WordPress
   mysql_user:
     name: "{{ mysql_user }}"
@@ -20,18 +20,19 @@
 
 - name: Download zip file wordpress
   get_url:
-    url: https://wordpress.org/latest.tar.gz
-    dest: /tmp/latest.tar.gz
+    url: https://br.wordpress.org/latest-pt_BR.tar.gz
+    dest: /tmp/latest-pt_BR.tar.gz
     mode: '0440'
 
 - name: Unzipping wordpress
   unarchive:
-    src: /tmp/latest.tar.gz
-    dest: /var/www/html
+    src: /tmp/latest-pt_BR.tar.gz
+    dest: /var/www/html/
+    remote_src: yes
 
 - name: Allow wordpress to modify files in /var/www/html
   file:
-    path: "/var/www/html"
+    path: "/var/www/html/wordpress"
     state: "directory"
     recurse: "yes"
     owner: "apache"
@@ -40,11 +41,11 @@
 
 - name: Allow apache to modify files in /var/www/html
   sefcontext:
-    target: '/var/www/html'
+    target: '/var/www/html/wordpress'
     setype: httpd_sys_rw_content_t
     state: present
 
 - name: Apply new SELinux file context to filesystem
-  command: restorecon -irv /var/www/html
+  command: restorecon -irv /var/www/html/wordpress
 
 ...

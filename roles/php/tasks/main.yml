@@ -33,22 +33,22 @@
 - name: Unzipping phpmyadmin
   unarchive:
     src: /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz
-    dest: /tmp/phpMyAdmin-5.0.2-all-languages
+    dest: /tmp/
   #command: tar -zxvf /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz  -C /tmp/
 
 - name: Move folder phpmyadmin to web folder
-  copy:
-    src: /tmp/phpMyAdmin-5.0.2-all-languages
-    dest: /usr/share/phpMyAdmin
-  #command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
+  #copy:
+   # src: /tmp/phpMyAdmin-5.0.2-all-languages
+    #dest: /usr/share/phpMyAdmin
+  command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
 
 - name: Copying configuration file
-  copy:
-    src: /usr/share/phpMyAdmin/config.sample.inc.php
-    dest: /usr/share/phpMyAdmin/config.inc.php
-  #command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
+  #copy:
+   # src: /usr/share/phpMyAdmin/config.sample.inc.php
+    #dest: /usr/share/phpMyAdmin/config.inc.php
+  command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
 
-name: Setting phpmyadmin password
+- name: Setting phpmyadmin password
   copy: src={{ item.src}} dest={{item.dest}}
   with_items:
           - { src: 'config.inc.php', dest: '/usr/share/phpMyAdmin/config.inc.php' }
@@ -57,11 +57,13 @@ name: Setting phpmyadmin password
   mysql_db:
     state: import
     name: phpmyadmin
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
     target: /usr/share/phpMyAdmin/sql/create_tables.sql
 
 - name: Creating alias for apache web server
-    copy: src={{ item.src}} dest={{item.dest}}
-    with_items:
+  copy: src={{ item.src}} dest={{item.dest}}
+  with_items:
             - { src: 'phpMyAdmin.conf', dest: '/etc/httpd/conf.d/phpMyAdmin.conf' }
 
 - name: Create diretory tmp
@@ -72,7 +74,7 @@ name: Setting phpmyadmin password
     mode: '0777'
     state: directory
 
-- name Restart apache server
+- name: Restart apache server
   systemd:
     name: httpd
     state: reloaded
