@@ -20,13 +20,13 @@
 
 - name: Download zip file wordpress
   get_url:
-    url: https://br.wordpress.org/latest-pt_BR.tar.gz
-    dest: /tmp/latest-pt_BR.tar.gz
+    url: https://wordpress.org/latest.tar.gz
+    dest: /tmp/latest.tar.gz
     mode: '0440'
 
 - name: Unzipping wordpress
   unarchive:
-    src: /tmp/latest-pt_BR.tar.gz
+    src: /tmp/latest.tar.gz
     dest: /var/www/html/
     remote_src: yes
 

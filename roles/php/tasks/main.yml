@@ -34,6 +34,7 @@
   unarchive:
     src: /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz
     dest: /tmp/
+    remote_src: yes
   #command: tar -zxvf /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz  -C /tmp/
 
 - name: Move folder phpmyadmin to web folder
