@@ -17,58 +17,23 @@
     name: https://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/s/ssmtp-2.64-14.el7.x86_64.rpm
     state: present
   
-
-- name: Copying configuration file
-  #copy:
-   # src: /usr/share/phpMyAdmin/config.sample.inc.php
-    #dest: /usr/share/phpMyAdmin/config.inc.php
-  command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
-
-- name: Setting phpmyadmin password
+- name: Copy config files
   copy: src={{ item.src}} dest={{item.dest}}
   with_items:
-          - { src: 'config.inc.php', dest: '/usr/share/phpMyAdmin/config.inc.php' }
+          - { src: 'ssmtp.conf', dest: '/etc/ssmtp/ssmtp.conf' }
+          - { src: 'revaliases', dest: '/etc/ssmtp/revaliases' }
 
-- name: Creating tables phpmyadmin
-  mysql_db:
-    state: import
-    name: phpmyadmin
-    login_user: root
-    login_password: "{{ mysql_root_password }}"
-    target: /usr/share/phpMyAdmin/sql/create_tables.sql
+- name: Create simbolic link sendmail
+  shell: cp -p /usr/sbin/sendmail /usr/sbin/sendmail.original
+  shell: rm /usr/sbin/sendmail
+  shell: cd /usr/sbin
+  shell: ln -s /usr/sbin/ssmtp sendmail
 
-- name: Creating alias for apache web server
-  copy: src={{ item.src}} dest={{item.dest}}
-  with_items:
-            - { src: 'phpMyAdmin.conf', dest: '/etc/httpd/conf.d/phpMyAdmin.conf' }
+- name Allowing your server to send emails
+  shell: setsebool -P httpd_can_sendmail=on
 
-- name: Create diretory tmp
-  file:
-    path: /usr/share/phpMyAdmin/tmp
-    owner: apache
-    group: apache
-    mode: '0777'
-    state: directory
-
-- name: Restart apache server
-  systemd:
-    name: httpd
-    state: reloaded
-
-- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/
-  sefcontext:
-    target: '/usr/share/phpMyAdmin/'
-    setype: httpd_sys_rw_content_t
-    state: present
-
-- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/tmp
-  sefcontext:
-    target: '/usr/share/phpMyAdmin/tmp(/.*)?'
-    setype: httpd_sys_rw_content_t
-    state: present
-
-- name: Apply new SELinux file context to filesystem
-  command: restorecon -Rv '/usr/share/phpMyAdmin/'
+- name: Send test email
+  shell: echo "Isso é um teste de envio de email" | mail -s "Test E-mail" thiago.mliberati@outlook.com
      
 
 ...
