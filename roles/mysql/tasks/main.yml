@@ -10,17 +10,38 @@
     packages:
         - mysql-server
         - mysql
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Enable and Start mysqld
+- name: Installing Mysql Packages for Debian or Ubuntu
+  apt:
+    name: "{{ packages }}"
+    update_cache=yes
+    state: latest
+  vars:
+    packages:
+        - python-mysqldb
+        - mysql-server
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: Enable and Start mysqld for Centos or RedHat
   systemd:
     name: mysqld
     state: started
     enabled: yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: Start the MySQL service for Debian or Ubuntu
+  service: 
+    name: mysql 
+    state: started
+    enabled: true
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 - name: Install python3-PyMySQL library
   dnf:
     name: python3-PyMySQL
     state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Set MySQL root Password
   mysql_user:
@@ -29,10 +50,6 @@
     login_password: ''
     name: 'root'
     password: '{{ mysql_pass }}'
-    #remove_anonymous_user: true
-    #disallow_root_login_remotely: true
-    #remove_test_db: true
-    #register: mysql_secure
     state: present
 
 ...

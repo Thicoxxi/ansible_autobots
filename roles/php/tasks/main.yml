@@ -2,7 +2,7 @@
 
 # Installing phpmyadmin
 
-- name: Installing packages for phpmyadmin
+- name: Installing packages for phpmyadmin in Centos or Redhat 
   dnf:
     name: "{{ packages }}"
     state: latest
@@ -22,31 +22,47 @@
         - php-pdo
         - php-xml
         - policycoreutils-python-utils
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: Installing packages for phpmyadmin in Debian or Ubuntu
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    update_cache=yes
+  vars:
+    packages:
+        - wget
+        - php
+        - php-mcrypt
+        - php-mysql
+        - php-common
+        - php-mysql
+        - php-tidy
+        - php-xml
+        - php-xmlrpc
+        - php-mbstring
+        - php-memcached
+        - php-curl
+        - php-zip
+ 
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 - name: Download zip file phpmyadmin
   get_url:
     url: https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz
     dest: /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz
     mode: '0440'
-  #command: wget -P /tmp https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz
 
 - name: Unzipping phpmyadmin
   unarchive:
     src: /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz
     dest: /tmp/
     remote_src: yes
-  #command: tar -zxvf /tmp/phpMyAdmin-5.0.2-all-languages.tar.gz  -C /tmp/
 
 - name: Move folder phpmyadmin to web folder
-  #copy:
-   # src: /tmp/phpMyAdmin-5.0.2-all-languages
-    #dest: /usr/share/phpMyAdmin
   command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
 
 - name: Copying configuration file
-  #copy:
-   # src: /usr/share/phpMyAdmin/config.sample.inc.php
-    #dest: /usr/share/phpMyAdmin/config.inc.php
   command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
 
 - name: Setting phpmyadmin password
@@ -75,25 +91,34 @@
     mode: '0777'
     state: directory
 
-- name: Restart apache server
+- name: Restart apache server centos
   systemd:
     name: httpd
     state: reloaded
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: restart apache ubuntu
+  notify:
+    - restart apache2
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 - name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/
   sefcontext:
     target: '/usr/share/phpMyAdmin/'
     setype: httpd_sys_rw_content_t
     state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/tmp
   sefcontext:
     target: '/usr/share/phpMyAdmin/tmp(/.*)?'
     setype: httpd_sys_rw_content_t
     state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Apply new SELinux file context to filesystem
   command: restorecon -Rv '/usr/share/phpMyAdmin/'
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
      
 
 ...

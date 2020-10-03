@@ -7,4 +7,5 @@
     - mysql
     - php
     - wordpress
+    - ssmtp
     - firewalld

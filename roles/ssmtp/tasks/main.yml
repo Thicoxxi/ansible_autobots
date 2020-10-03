@@ -6,16 +6,25 @@
   yum:
     name: https://rpmfind.net/linux/centos/8-stream/AppStream/x86_64/os/Packages/compat-openssl10-1.0.2o-3.el8.i686.rpm
     state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Install mailx
   yum:
     name: mailx
     state: latest
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Install RPM packge ssmtp
   yum:
     name: https://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/s/ssmtp-2.64-14.el7.x86_64.rpm
     state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: Install ssmtp Ubuntu
+  apt:
+    name: ssmtp
+    state: present
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   
 - name: Copy config files
   copy: src={{ item.src}} dest={{item.dest}}

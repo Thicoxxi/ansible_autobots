@@ -6,6 +6,7 @@
     service: cockpit
     permanent: yes
     state: enabled
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 # Enable firewall rules for Apache
 - name: Enable firewall rules for HTTP
@@ -13,16 +14,26 @@
     service: http
     permanent: yes
     state: enabled
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Enable firewall rules for HTTPS
   firewalld:
     service: https
     permanent: yes
     state: enabled
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: Allow all access to tcp port 80
+  community.general.ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 # Reload firewall
 - name: firewalld reload
   command: firewall-cmd --reload
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 
 ...

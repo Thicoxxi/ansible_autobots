@@ -8,12 +8,28 @@
     state: present
     login_user: root
     login_password: "{{ mysql_root_password }}"
+
+- name: Creates database for Sincpress
+  mysql_db:
+    name: "{{ mysql_dbs }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
  
 - name: Create MySQL user for WordPress
   mysql_user:
     name: "{{ mysql_user }}"
     password: "{{ mysql_password }}"
     priv: "{{ mysql_db }}.*:ALL"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Create MySQL user for Sincpress
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_dbs }}.*:ALL"
     state: present
     login_user: root
     login_password: "{{ mysql_root_password }}"
@@ -38,14 +54,19 @@
     owner: "apache"
     group: "apache"
 
+- name Create wordpress for Sincpress
+  command: cp -pr /var/www/html/wordpress  /var/www/html/sincpress   
+
 
 - name: Allow apache to modify files in /var/www/html
   sefcontext:
     target: '/var/www/html/wordpress'
     setype: httpd_sys_rw_content_t
     state: present
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: Apply new SELinux file context to filesystem
   command: restorecon -irv /var/www/html/wordpress
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 ...

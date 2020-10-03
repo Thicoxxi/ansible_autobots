@@ -11,11 +11,29 @@
         - httpd
         - tar
         - curl
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: Installing Apache for ubuntu
+  apt:
+    name: "{{ packages }}"
+    update_cache=yes
+    state: latest
+  vars:
+    packages:
+        - apache2
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 - name: Enable and Start apache service
   systemd:
     name: httpd
     state: started
     enabled: yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: enabled mod_rewrite
+  apache2_module: name=rewrite state=present
+  notify:
+    - restart apache2
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 ...
