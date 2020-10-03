@@ -28,22 +28,21 @@
   apt:
     name: "{{ packages }}"
     state: latest
-    update_cache=yes
+    update_cache: yes
   vars:
     packages:
         - wget
-        - php
-        - php-mcrypt
-        - php-mysql
-        - php-common
-        - php-mysql
-        - php-tidy
-        - php-xml
-        - php-xmlrpc
-        - php-mbstring
-        - php-memcached
-        - php-curl
-        - php-zip
+        - php7.4
+        - php7.4-mysql
+        - php7.4-common
+        - php7.4-mysql
+        - php7.4-tidy
+        - php7.4-xml
+        - php7.4-xmlrpc
+        - php7.4-mbstring
+        - php7.4-memcached
+        - php7.4-curl
+        - php7.4-zip
  
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
@@ -81,13 +80,14 @@
 - name: Creating alias for apache web server
   copy: src={{ item.src}} dest={{item.dest}}
   with_items:
-            - { src: 'phpMyAdmin.conf', dest: '/etc/httpd/conf.d/phpMyAdmin.conf' }
+           # - { src: 'phpMyAdmin.conf', dest: '/etc/httpd/conf.d/phpMyAdmin.conf' }
+             - { src: 'phpMyAdmin.conf', dest: '/etc/apache2/sites-enabled/phpMyAdmin.conf' }
 
 - name: Create diretory tmp
   file:
     path: /usr/share/phpMyAdmin/tmp
-    owner: apache
-    group: apache
+    owner: root
+    group: root
     mode: '0777'
     state: directory
 
@@ -98,8 +98,9 @@
   when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
 - name: restart apache ubuntu
-  notify:
-    - restart apache2
+  service:
+    name: apache2
+    state: restarted
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 - name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/

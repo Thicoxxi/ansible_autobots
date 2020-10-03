@@ -25,6 +25,12 @@
     name: ssmtp
     state: present
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: Install mail Ubuntu
+  apt:
+    name: mailutils
+    state: present
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   
 - name: Copy config files
   copy: src={{ item.src}} dest={{item.dest}}
@@ -32,17 +38,23 @@
           - { src: 'ssmtp.conf', dest: '/etc/ssmtp/ssmtp.conf' }
           - { src: 'revaliases', dest: '/etc/ssmtp/revaliases' }
 
-- name: Create simbolic link sendmail
-  shell: cp -p /usr/sbin/sendmail /usr/sbin/sendmail.original
-  shell: rm /usr/sbin/sendmail
-  shell: cd /usr/sbin
-  shell: ln -s /usr/sbin/ssmtp sendmail
+- name: Delete  symlink existent
+  file:
+    state: absent
+    path: "/usr/sbin/sendmail"
+   
+- name: Recreate symlink
+  file:
+    src: "/usr/sbin/ssmtp"
+    dest: "/usr/sbin/sendmail"
+    state: link
 
-- name Allowing your server to send emails
+- name: Allowing your server to send emails
   shell: setsebool -P httpd_can_sendmail=on
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Send test email
-  shell: echo "Isso é um teste de envio de email" | mail -s "Test E-mail" thiago.mliberati@outlook.com
+#- name: Send test email
+#  shell: echo "Isso é um teste de envio de email" | mail -s "Test E-mail" thiago.mliberati@outlook.com
      
 
 ...

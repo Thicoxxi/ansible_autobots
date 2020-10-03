@@ -15,11 +15,11 @@
 - name: Installing Mysql Packages for Debian or Ubuntu
   apt:
     name: "{{ packages }}"
-    update_cache=yes
+    update_cache: yes
     state: latest
   vars:
     packages:
-        - python-mysqldb
+        - python3-mysqldb
         - mysql-server
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 

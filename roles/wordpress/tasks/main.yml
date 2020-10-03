@@ -2,7 +2,7 @@
 
 # Installing the Wordpress
 
-- name: Creates database for WordPress
+- name: Creates database for Sinctronics
   mysql_db:
     name: "{{ mysql_db }}"
     state: present
@@ -16,7 +16,7 @@
     login_user: root
     login_password: "{{ mysql_root_password }}"
  
-- name: Create MySQL user for WordPress
+- name: Create MySQL user for Sinctronics
   mysql_user:
     name: "{{ mysql_user }}"
     password: "{{ mysql_password }}"
@@ -27,7 +27,7 @@
 
 - name: Create MySQL user for Sincpress
   mysql_user:
-    name: "{{ mysql_user }}"
+    name: "{{ mysql_users }}"
     password: "{{ mysql_password }}"
     priv: "{{ mysql_dbs }}.*:ALL"
     state: present
@@ -46,16 +46,30 @@
     dest: /var/www/html/
     remote_src: yes
 
-- name: Allow wordpress to modify files in /var/www/html
+- name: Copying wordpress to sincpress
+  command: cp -pr /var/www/html/wordpress /var/www/html/sincpress
+
+- name: Change name wordpress to sinctronics
+  command: mv /var/www/html/wordpress /var/www/html/sinctronics
+
+- name: Allow sinctronics to modify files in /var/www/html
   file:
-    path: "/var/www/html/wordpress"
+    path: "/var/www/html/sinctronics"
     state: "directory"
     recurse: "yes"
-    owner: "apache"
-    group: "apache"
+    owner: "root"
+    group: "root"
+    mode: '0777'
+   
 
-- name Create wordpress for Sincpress
-  command: cp -pr /var/www/html/wordpress  /var/www/html/sincpress   
+- name: Allow sinctronics to modify files in /var/www/html
+  file:
+    path: "/var/www/html/sincpress"
+    state: "directory"
+    recurse: "yes"
+    owner: "root"
+    group: "root"
+    mode: '0777'
 
 
 - name: Allow apache to modify files in /var/www/html

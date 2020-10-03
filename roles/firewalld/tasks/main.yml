@@ -23,12 +23,12 @@
     state: enabled
   when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Allow all access to tcp port 80
-  community.general.ufw:
-    rule: allow
-    port: '80'
-    proto: tcp
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+#- name: Allow all access to tcp port 80
+#  community.general.ufw:
+#    rule: allow
+#    port: '80'
+#    proto: tcp
+#  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
 # Reload firewall
 - name: firewalld reload
