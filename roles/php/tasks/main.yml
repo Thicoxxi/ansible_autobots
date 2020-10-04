@@ -24,7 +24,7 @@
         - policycoreutils-python-utils
   when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Installing packages for phpmyadmin in Debian or Ubuntu
+- name: Installing packages for phpmyadmin in Debian 10 or Ubuntu 20
   apt:
     name: "{{ packages }}"
     state: latest
@@ -43,8 +43,28 @@
         - php7.4-memcached
         - php7.4-curl
         - php7.4-zip
- 
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+  when: (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] == "20")
+
+- name: Installing packages for phpmyadmin in Debian 8 or Ubuntu 18
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages:
+        - wget
+        - php7.2
+        - php7.2-mysql
+        - php7.2-common
+        - php7.2-mysql
+        - php7.2-tidy
+        - php7.2-xml
+        - php7.2-xmlrpc
+        - php7.2-mbstring
+        - php7.2-memcached
+        - php7.2-curl
+        - php7.2-zip
+  when: (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] == "18")
 
 - name: Download zip file phpmyadmin
   get_url:
