@@ -1,5 +1,5 @@
 ---
-
+# ver como instala msi em ansible https://github.com/RonaldCarter/PHPmanager/releases/download/V1.5.0/PHPManagerForIIS_V1.5.0.msi
 # Installing phpmyadmin
 
 - name: Installing packages for php in Windows Server
