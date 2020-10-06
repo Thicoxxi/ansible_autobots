@@ -1,0 +1,39 @@
+---
+
+# Installing IIS
+
+- name: Installing IIS
+  win_feature:
+    name: Web-Server
+    state: present
+
+- name: Install IIS (Web-Server and Web-Common-Http)
+  win_feature:
+    name:
+     - Web-Server
+     - Web-Common-Http
+    state: present
+
+- name: Install IIS Web-Server with sub features and management tools
+  win_feature:
+    name: Web-Server
+    state: present
+    include_sub_features: yes
+    include_management_tools: yes
+  register: win_feature
+
+- name: Download Microsoft .NET Framework 4.6.1 installer
+  win_get_url:
+    url: https://download.microsoft.com/download/E/4/1/E4173890-A24A-4936-9FC9-AF930FE3FA40/NDP461-KB3102436-x86-x64-AllOS-ENU.exe
+    dest: C:\tmp\NDP461-KB3102436-x86-x64-AllOS-ENU.exe
+
+- name: Run Microsoft .NET Framework 4.6.1 installer
+  raw: C:\tmp\NDP461-KB3102436-x86-x64-AllOS-ENU.exe  /q /norestart /log C:\tmp\dotnet\dotnet461\log.txt /x86 /x64 /redist
+  register: dotnet_install
+
+
+- name: Reboot if installing Web-Server feature requires it
+  win_reboot:
+  when: win_feature.reboot_required
+
+...

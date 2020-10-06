@@ -1,0 +1,45 @@
+---
+
+# Installing IIS
+
+- name: Install IIS (Web-Server only)
+  ansible.windows.win_feature:
+    name: Web-Server
+    state: present
+
+- name: Install IIS (Web-Server and Web-Common-Http)
+  ansible.windows.win_feature:
+    name:
+     - Web-Server
+     - Web-Common-Http
+    state: present
+
+- name: Install IIS Web-Server with sub features and management tools
+  ansible.windows.win_feature:
+    name: Web-Server
+    state: present
+    include_sub_features: yes
+    include_management_tools: yes
+  register: win_feature
+
+- name: Download Microsoft .NET Framework 4.6.1 installer
+  win_get_url:
+    url: http://www.path.to/package/dotnet461.zip
+    dest: C:\tmp\dotnet\dotnet461.zip
+
+- name: Unzip Microsoft .NET Framework 4.6.1 installer
+  win_unzip:
+    src: C:\tmp\dotnet\dotnet461.zip
+    dest: C:\tmp\dotnet
+    rm: true
+
+- name: Run Microsoft .NET Framework 4.6.1 installer
+  raw: C:\tmp\dotnet\dotnet461\Setup.exe /q /norestart /log C:\tmp\dotnet\dotnet461\log.txt /x86 /x64 /redist
+  register: dotnet_install
+
+
+- name: Reboot if installing Web-Server feature requires it
+  ansible.windows.win_reboot:
+  when: win_feature.reboot_required
+
+...

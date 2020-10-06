@@ -1,0 +1,9 @@
+---
+
+- name: firewalld reload
+  command: firewall-cmd --reload
+
+#- name: start cockpit
+#  systemd: state=started enabled=yes daemon_reload=yes name=cockpit
+
+...
