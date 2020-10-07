@@ -22,6 +22,16 @@
     include_management_tools: yes
   register: win_feature
 
+- name: Download Re-write module
+  win_get_url:
+    url: https://download.microsoft.com/download/1/2/8/128E2E22-C1B9-44A4-BE2A-5859ED1D4592/rewrite_amd64_en-US.msi
+    dest: C:\tmp\rewrite_amd64_en-US.msi
+
+- name: Install re-write module
+  ansible.windows.win_package:
+    path: C:\tmp\rewrite_amd64_en-US.msi
+    state: present
+
 - name: Download Microsoft .NET Framework 4.6.1 installer
   win_get_url:
     url: https://download.microsoft.com/download/E/4/1/E4173890-A24A-4936-9FC9-AF930FE3FA40/NDP461-KB3102436-x86-x64-AllOS-ENU.exe

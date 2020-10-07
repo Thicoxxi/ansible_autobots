@@ -8,86 +8,97 @@
     name: '{{ item }}'
     state: latest
   with_items:
+    - vcredist140
     - php
+
+- name: Download PhP Manager for IIS 
+  win_get_url:
+    url: https://github.com/RonaldCarter/PHPmanager/releases/download/V1.5.0/PHPManagerForIIS_V1.5.0.msi
+    dest: C:\tmp\PHPManagerForIIS_V1.5.0.msi
+
+- name: Install PHP Manager
+  ansible.windows.win_package:
+    path: C:\tmp\PHPManagerForIIS_V1.5.0.msi
+    state: present
  
 
-- name: Download zip file phpmyadmin
-  win_get_url:
-    url: https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.zip
-    dest: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
+#- name: Download zip file phpmyadmin
+#  win_get_url:
+#    url: https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.zip
+#    dest: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
 
-- name: Unzipping phpmyadmin
-  win_unzip:
-    src: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
-    dest: C:\tmp\phpMyAdmin
+#- name: Unzipping phpmyadmin
+#  win_unzip:
+#    src: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
+#    dest: C:\tmp\phpMyAdmin
     
 
-- name: Move folder phpmyadmin to web folder
-  win_copy:
-    src: C:\tmp\phpMyAdmin
-    dest: C:\Apache\\data\htdocs\phpMyAdmin 
-    remote_src: True
-  command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
+#- name: Move folder phpmyadmin to web folder
+#  win_copy:
+#    src: C:\tmp\phpMyAdmin
+#    dest: C:\Apache\\data\htdocs\phpMyAdmin 
+#    remote_src: True
+#  command: mv /tmp/phpMyAdmin-5.0.2-all-languages /usr/share/phpMyAdmin
 
-- name: Copying configuration file
-  command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
+#- name: Copying configuration file
+#  command: cp -pr /usr/share/phpMyAdmin/config.sample.inc.php /usr/share/phpMyAdmin/config.inc.php
 
-- name: Setting phpmyadmin password
-  copy: src={{ item.src}} dest={{item.dest}}
-  with_items:
-          - { src: 'config.inc.php', dest: '/usr/share/phpMyAdmin/config.inc.php' }
+#- name: Setting phpmyadmin password
+#  copy: src={{ item.src}} dest={{item.dest}}
+#  with_items:
+#          - { src: 'config.inc.php', dest: '/usr/share/phpMyAdmin/config.inc.php' }
 
-- name: Creating tables phpmyadmin
-  mysql_db:
-    state: import
-    name: phpmyadmin
-    login_user: root
-    login_password: "{{ mysql_root_password }}"
-    target: /usr/share/phpMyAdmin/sql/create_tables.sql
+#- name: Creating tables phpmyadmin
+#  mysql_db:
+#    state: import
+#    name: phpmyadmin
+#    login_user: root
+#    login_password: "{{ mysql_root_password }}"
+#    target: /usr/share/phpMyAdmin/sql/create_tables.sql
 
-- name: Creating alias for apache web server
-  copy: src={{ item.src}} dest={{item.dest}}
-  with_items:
+#- name: Creating alias for apache web server
+#  copy: src={{ item.src}} dest={{item.dest}}
+#  with_items:
            # - { src: 'phpMyAdmin.conf', dest: '/etc/httpd/conf.d/phpMyAdmin.conf' }
-             - { src: 'phpMyAdmin.conf', dest: '/etc/apache2/sites-enabled/phpMyAdmin.conf' }
+#             - { src: 'phpMyAdmin.conf', dest: '/etc/apache2/sites-enabled/phpMyAdmin.conf' }
 
-- name: Create diretory tmp
-  file:
-    path: /usr/share/phpMyAdmin/tmp
-    owner: root
-    group: root
-    mode: '0777'
-    state: directory
+#- name: Create diretory tmp
+#  file:
+#    path: /usr/share/phpMyAdmin/tmp
+#    owner: root
+#    group: root
+#    mode: '0777'
+#    state: directory
 
-- name: Restart apache server centos
-  systemd:
-    name: httpd
-    state: reloaded
-  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+#- name: Restart apache server centos
+#  systemd:
+#    name: httpd
+#    state: reloaded
+#  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: restart apache ubuntu
-  service:
-    name: apache2
-    state: restarted
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+#- name: restart apache ubuntu
+#  service:
+#    name: apache2
+#    state: restarted
+#  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
-- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/
-  sefcontext:
-    target: '/usr/share/phpMyAdmin/'
-    setype: httpd_sys_rw_content_t
-    state: present
-  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+#- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/
+#  sefcontext:
+#    target: '/usr/share/phpMyAdmin/'
+#    setype: httpd_sys_rw_content_t
+#    state: present
+#  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/tmp
-  sefcontext:
-    target: '/usr/share/phpMyAdmin/tmp(/.*)?'
-    setype: httpd_sys_rw_content_t
-    state: present
-  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+#- name: Allow phpmyadmin to modify files in /usr/share/phpMyAdmin/tmp
+#  sefcontext:
+#    target: '/usr/share/phpMyAdmin/tmp(/.*)?'
+#    setype: httpd_sys_rw_content_t
+#    state: present
+#  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Apply new SELinux file context to filesystem
-  command: restorecon -Rv '/usr/share/phpMyAdmin/'
-  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+#- name: Apply new SELinux file context to filesystem
+#  command: restorecon -Rv '/usr/share/phpMyAdmin/'
+#  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
      
 
 ...

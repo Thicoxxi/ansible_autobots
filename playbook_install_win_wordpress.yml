@@ -3,3 +3,5 @@
   roles:
     - common_win
     - iis
+    - mysql_win
+    - php_win
