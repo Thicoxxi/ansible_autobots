@@ -22,15 +22,15 @@
     state: present
  
 
-#- name: Download zip file phpmyadmin
-#  win_get_url:
-#    url: https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.zip
-#    dest: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
+- name: Download zip file phpmyadmin
+  win_get_url:
+    url: https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.zip
+    dest: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
 
-#- name: Unzipping phpmyadmin
-#  win_unzip:
-#    src: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
-#    dest: C:\tmp\phpMyAdmin
+- name: Unzipping phpmyadmin
+  win_unzip:
+    src: C:\tmp\phpMyAdmin-5.0.2-all-languages.zip
+    dest: C:\tmp\phpMyAdmin
     
 
 #- name: Move folder phpmyadmin to web folder

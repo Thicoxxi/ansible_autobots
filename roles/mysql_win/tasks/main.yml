@@ -2,19 +2,16 @@
 
 # Installing the Mysql
 
-- name: Download Mysql Server
+- name: Download zip file Mysql
   win_get_url:
-    url: https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-8.0.21.0.msi
-    dest: C:\tmp\mysql-installer-community-8.0.21.0.msi
+    url: https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.21-winx64.zip
+    dest: C:\tmp\mysql-8.0.21-winx64.zip
 
-- name: Install MySql Server
-  ansible.windows.win_package:
-    path: C:\tmp\mysql-installer-community-8.0.21.0.msi
-    arguments:
-    - /install
-    - /passive
-    - /norestart
-    state: present
+- name: Unzipping Mysql
+  win_unzip:
+    src: C:\tmp\mysql-8.0.21-winx64.zip
+    dest: C:\tmp\mysql
+
 #https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-8.0.21.0.msi
 
 #- name: Installing Mysql Server for Windows
