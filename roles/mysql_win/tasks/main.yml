@@ -10,7 +10,13 @@
 - name: Unzipping Mysql
   win_unzip:
     src: C:\tmp\mysql-8.0.21-winx64.zip
-    dest: C:\tmp\mysql
+    dest: C:\tools\
+
+- name: Create MySQL service
+  ansible.windows.win_service:
+    name: MySQL
+    path: C:\tools\mysql-8.0.21-winx64\mysql-8.0.21-winx64\bin\mysqld.exe
+
 
 #https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-8.0.21.0.msi
 
